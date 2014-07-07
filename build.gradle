@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-release' }
+        maven { url 'https://s3.amazonaws.com/ca.mariusbogoevici.repo/'}
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
+        classpath 'ca.mariusbogoevici.springxd.gradle:spring-xd-module:1.0-SNAPSHOT'
+    }
+}
+
+sourceCompatibility = 1.7
+version = '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'spring-xd-module'
+
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+apply plugin: 'propdeps-eclipse'
+
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://maven.springframework.org/milestone"
+    }
+}
+
+ext {
+    mongoDriverVersion = '2.12.1'
+    springVersion = '4.0.5.RELEASE'
+    springIntegrationVersion = '4.0.2.RELEASE'
+    springDataMongo = '1.5.0.RELEASE'
+    springXdVersion = '1.0.0.M7'
+}
+
+dependencies {
+    provided "org.springframework:spring-messaging:$springVersion"
+    provided "org.springframework.integration:spring-integration-core:$springIntegrationVersion"
+    provided "org.springframework.xd:spring-xd-tuple:$springXdVersion"
+
+    compile "org.mongodb:mongo-java-driver:$mongoDriverVersion"
+    compile ("org.springframework.data:spring-data-mongodb:$springDataMongo") {
+        transitive = false
+    }
+    compile ("org.springframework.integration:spring-integration-mongodb:$springIntegrationVersion") {
+        transitive = false
+    }
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

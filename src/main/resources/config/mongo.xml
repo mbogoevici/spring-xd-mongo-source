@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:int-mongodb="http://www.springframework.org/schema/integration/mongodb"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+                  http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+                  http://www.springframework.org/schema/integration/mongodb http://www.springframework.org/schema/integration/mongodb/spring-integration-mongodb.xsd">
+
+
+    <int:channel id="output"/>
+
+    <int-mongodb:inbound-channel-adapter id="mongoInboundAdapter"
+                                         channel="output"
+                                         collection-name="${collection}"
+                                         query="${query}">
+        <int:poller fixed-rate="100"/>
+    </int-mongodb:inbound-channel-adapter>
+
+    <mongo:db-factory dbname="${databaseName}" host="${host}" port="${port}"/>
+
+    <mongo:template converter-ref="mappingConverter"/>
+
+    <mongo:mapping-converter>
+        <mongo:custom-converters>
+            <mongo:converter>
+                <bean class="ca.mariusbogoevici.springxd.mongo.source.TupleReadConverter"/>
+            </mongo:converter>
+        </mongo:custom-converters>
+    </mongo:mapping-converter>
+
+
+</beans>
